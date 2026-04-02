@@ -13,14 +13,20 @@
 - [x] Test suite foundation
 - [x] Docker setup
 
-### Sprint 2 (Weeks 3-4): Core Agents
-- [ ] Order Agent — full order creation flow
-- [ ] Order Agent — status tracking and updates
-- [ ] CRM Agent — customer profile creation from chat
-- [ ] CRM Agent — returning customer recognition
-- [ ] Inventory Agent — product catalog CRUD via chat
-- [ ] Connect agents to PostgreSQL database
-- [ ] Redis session management
+### Sprint 2 (Weeks 3-4): Services & Database Layer (COMPLETED)
+- [x] Order Agent — full order creation flow with DB persistence
+- [x] Order Agent — status tracking, updates, daily summaries
+- [x] CRM Agent — customer profile creation from chat
+- [x] CRM Agent — returning customer recognition, VIP detection
+- [x] Inventory Agent — product catalog CRUD, search, bulk import
+- [x] Connect agents to PostgreSQL database (4 service classes)
+- [x] Redis session management (cart, history, multi-step flows)
+- [x] Central MessageHandler (receive → NLP → agent → DB → respond)
+- [x] Merchant self-registration onboarding flow
+- [x] Notification service (order alerts, low stock, daily reports)
+- [x] Analytics endpoints (overview, top products, top customers)
+- [x] Conversation context builder for Claude API
+- [x] Session and conversation unit tests
 
 ### Sprint 3 (Weeks 5-6): WhatsApp Integration
 - [ ] WhatsApp Business API full integration

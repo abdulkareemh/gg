@@ -1,6 +1,6 @@
 # Noor AI — Task Tracker
 
-## Current Sprint: Sprint 1 — Foundation
+## Sprint 1 — Foundation (COMPLETED)
 
 ### Completed
 - [x] **PROJ-001**: Initialize repository and project structure
@@ -22,17 +22,33 @@
 - [x] **PROJ-017**: Configuration management (.env, settings)
 - [x] **PROJ-018**: Documentation (README, pitch, business plan, team)
 
-### Next Up (Sprint 2)
-- [ ] **PROJ-019**: Connect OrderAgent to PostgreSQL (create orders in DB)
-- [ ] **PROJ-020**: Connect CRMAgent to PostgreSQL (create/update customers)
-- [ ] **PROJ-021**: Connect InventoryAgent to PostgreSQL (CRUD products)
-- [ ] **PROJ-022**: Implement Redis session store for conversation context
-- [ ] **PROJ-023**: Multi-turn conversation support (remember previous messages)
-- [ ] **PROJ-024**: WhatsApp message sending (close the loop — receive + respond)
-- [ ] **PROJ-025**: Merchant self-registration flow via WhatsApp
+---
+
+## Current Sprint: Sprint 2 — Services & Database Layer
+
+### Completed
+- [x] **PROJ-019**: Connect OrderAgent to PostgreSQL — OrderService with full CRUD, daily summaries
+- [x] **PROJ-020**: Connect CRMAgent to PostgreSQL — CustomerService with get_or_create, top customers, diaspora
+- [x] **PROJ-021**: Connect InventoryAgent to PostgreSQL — ProductService with catalog, search, bulk import, low stock
+- [x] **PROJ-022**: Implement Redis session store — SessionService with cart, history, state management
+- [x] **PROJ-023**: Multi-turn conversation support — ConversationBuilder with history, context, Claude prompts
+- [x] **PROJ-024**: WhatsApp/Telegram message sending — MessageHandler closes the full loop (receive → process → respond)
+- [x] **PROJ-025**: Merchant self-registration flow via WhatsApp — multi-step onboarding (name, business, type, city)
+- [x] **PROJ-027**: Order notification to merchant — NotificationService (new order, confirmed, ready, low stock, daily report)
+- [x] **PROJ-028**: Session and conversation tests — test_session.py, test_conversation.py with mocked Redis
+- [x] **PROJ-041**: Analytics endpoints — overview, top products, top customers
+- [x] **PROJ-042**: MerchantService — phone lookup, create, update plan, deactivate
+- [x] **PROJ-043**: Enhanced merchant API — full CRUD for products, orders, bulk import, low stock alerts
+- [x] **PROJ-044**: Conversation context builder — Syrian Arabic system prompt, order summary formatter, menu formatter
+
+### Next Up (Sprint 3)
 - [ ] **PROJ-026**: Product catalog import (CSV upload via chat)
-- [ ] **PROJ-027**: Order notification to merchant when new order arrives
-- [ ] **PROJ-028**: Integration tests with test database
+- [ ] **PROJ-045**: Alembic database migrations setup
+- [ ] **PROJ-046**: End-to-end testing with SQLite test database
+- [ ] **PROJ-047**: Rate limiting middleware (per phone number)
+- [ ] **PROJ-048**: Webhook signature verification (WhatsApp security)
+- [ ] **PROJ-049**: Error recovery and graceful degradation
+- [ ] **PROJ-050**: Logging and monitoring setup
 
 ### Backlog
 - [ ] **PROJ-029**: SyriaTel Cash payment integration

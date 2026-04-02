@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from src.api.routes import webhook, health, merchants
+from src.api.routes import webhook, health, merchants, analytics
 from src.models.database import init_db
 
 
@@ -24,3 +24,4 @@ app = FastAPI(
 app.include_router(health.router, tags=["Health"])
 app.include_router(webhook.router, prefix="/webhook", tags=["Webhooks"])
 app.include_router(merchants.router, prefix="/api/merchants", tags=["Merchants"])
+app.include_router(analytics.router, prefix="/api/merchants", tags=["Analytics"])

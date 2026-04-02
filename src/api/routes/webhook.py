@@ -3,11 +3,11 @@
 from fastapi import APIRouter, Request, HTTPException
 from pydantic import BaseModel
 
-from src.agents.router import AgentRouter
+from src.services.message_handler import MessageHandler
 from src.utils.config import settings
 
 router = APIRouter()
-agent_router = AgentRouter()
+handler = MessageHandler()
 
 
 class TelegramUpdate(BaseModel):
@@ -42,7 +42,7 @@ async def whatsapp_incoming(request: Request):
                 if msg.get("type") == "text":
                     phone = msg["from"]
                     text = msg["text"]["body"]
-                    await _process_message(
+                    await handler.handle_message(
                         phone=phone,
                         text=text,
                         platform="whatsapp",
@@ -64,33 +64,10 @@ async def telegram_incoming(update: TelegramUpdate):
     phone = str(chat.get("id", ""))
 
     if text:
-        await _process_message(
+        await handler.handle_message(
             phone=phone,
             text=text,
             platform="telegram",
         )
 
     return {"status": "ok"}
-
-
-async def _process_message(phone: str, text: str, platform: str):
-    """Process an incoming message through the agent router."""
-    # TODO: Look up merchant by phone, load context from DB
-    context = {
-        "phone": phone,
-        "platform": platform,
-        "products": [],
-    }
-
-    response = await agent_router.route(
-        merchant_id=0,  # TODO: resolve from phone
-        message=text,
-        context=context,
-    )
-
-    # TODO: Send response back via WhatsApp/Telegram API
-    # For now, log the response
-    print(f"[{platform}] {phone}: {text}")
-    print(f"[Noor] -> {response.text_ar}")
-
-    return response
