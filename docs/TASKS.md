@@ -41,24 +41,41 @@
 - [x] **PROJ-043**: Enhanced merchant API — full CRUD for products, orders, bulk import, low stock alerts
 - [x] **PROJ-044**: Conversation context builder — Syrian Arabic system prompt, order summary formatter, menu formatter
 
-### Next Up (Sprint 3)
-- [ ] **PROJ-026**: Product catalog import (CSV upload via chat)
-- [ ] **PROJ-045**: Alembic database migrations setup
-- [ ] **PROJ-046**: End-to-end testing with SQLite test database
-- [ ] **PROJ-047**: Rate limiting middleware (per phone number)
-- [ ] **PROJ-048**: Webhook signature verification (WhatsApp security)
-- [ ] **PROJ-049**: Error recovery and graceful degradation
-- [ ] **PROJ-050**: Logging and monitoring setup
+---
 
-### Backlog
-- [ ] **PROJ-029**: SyriaTel Cash payment integration
-- [ ] **PROJ-030**: MTN Cash payment integration
-- [ ] **PROJ-031**: Daily sales report generation
-- [ ] **PROJ-032**: Low-stock alert scheduler
+## Sprint 3 — Security, Payments & Production (COMPLETED)
+
+### Completed
+- [x] **PROJ-029**: SyriaTel Cash payment integration — full provider with initiate, check, refund
+- [x] **PROJ-030**: MTN Cash payment integration — full provider with initiate, check, refund
+- [x] **PROJ-031**: Daily sales report generation — auto-sent via scheduler
+- [x] **PROJ-032**: Low-stock alert scheduler — hourly checks with notifications
+- [x] **PROJ-034**: Product search with fuzzy matching — Levenshtein distance + Arabic aliases
+- [x] **PROJ-045**: Alembic database migrations — initial schema with all 6 tables
+- [x] **PROJ-046**: Integration tests with SQLite — 15+ tests across all services
+- [x] **PROJ-047**: Rate limiting middleware — 60 req/min per IP, X-RateLimit-Remaining header
+- [x] **PROJ-048**: Webhook signature verification — HMAC SHA-256 WhatsApp validation
+- [x] **PROJ-049**: Error handling middleware — global exception handler with Arabic error messages
+- [x] **PROJ-050**: Logging and monitoring — structured JSON logging, in-memory metrics
+- [x] **PROJ-051**: Payment Gateway — unified interface, auto-detect provider from phone prefix
+- [x] **PROJ-052**: Payment webhook endpoints — SyriaTel and MTN callback handlers
+- [x] **PROJ-053**: Payment model and service — DB persistence, callback handling
+- [x] **PROJ-054**: CI/CD pipeline — GitHub Actions (lint, test, security scan, Docker build)
+- [x] **PROJ-055**: CORS middleware — configured for dashboard and production domains
+- [x] **PROJ-056**: Request size limiting — 1MB max body
+- [x] **PROJ-057**: Request logging middleware — timing, status codes
+- [x] **PROJ-058**: Metrics endpoint — /metrics with counters and timings
+- [x] **PROJ-059**: Background task scheduler — periodic daily reports, stock checks, cleanup
+- [x] **PROJ-060**: Fuzzy search tests, middleware tests, integration tests
+- [x] **PROJ-061**: API documentation (docs/API.md)
+- [x] **PROJ-062**: Deployment guide (docs/DEPLOYMENT.md)
+- [x] **PROJ-063**: Chat flow documentation (docs/CHAT_FLOWS.md)
+- [x] **PROJ-064**: Contributing guide (docs/CONTRIBUTING.md)
+
+### Backlog (Sprint 4+)
+- [ ] **PROJ-026**: Product catalog import (CSV upload via chat)
 - [ ] **PROJ-033**: Customer order history lookup
-- [ ] **PROJ-034**: Product search with fuzzy matching
 - [ ] **PROJ-035**: Voice message transcription
-- [ ] **PROJ-036**: Diaspora ordering flow
 - [ ] **PROJ-037**: Web dashboard (merchant analytics)
 - [ ] **PROJ-038**: CI/CD pipeline setup
 - [ ] **PROJ-039**: Production deployment

@@ -27,6 +27,13 @@ class Settings(BaseSettings):
     # Telegram
     telegram_bot_token: str = ""
 
+    # Payment providers
+    syriatel_cash_api_key: str = ""
+    mtn_cash_api_key: str = ""
+
+    # App URL (for payment callbacks)
+    app_url: str = "http://localhost:8000"
+
     class Config:
         env_file = "config/.env"
 
