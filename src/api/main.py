@@ -3,8 +3,10 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
-from src.api.routes import webhook, health, merchants, analytics, payments
+from src.api.routes import webhook, health, merchants, analytics, payments, diaspora, customers
 from src.api.middleware import (
     RateLimitMiddleware,
     RequestLoggingMiddleware,
@@ -52,3 +54,13 @@ app.include_router(webhook.router, prefix="/webhook", tags=["Webhooks"])
 app.include_router(merchants.router, prefix="/api/merchants", tags=["Merchants"])
 app.include_router(analytics.router, prefix="/api/merchants", tags=["Analytics"])
 app.include_router(payments.router, prefix="/webhook", tags=["Payments"])
+app.include_router(diaspora.router, prefix="/api/diaspora", tags=["Diaspora"])
+app.include_router(customers.router, prefix="/api/merchants", tags=["Customers"])
+
+# Static files and landing page
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@app.get("/")
+async def landing_page():
+    return FileResponse("static/index.html")
