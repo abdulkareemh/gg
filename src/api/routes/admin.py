@@ -155,3 +155,17 @@ async def payments_overview(db: AsyncSession = Depends(get_db)):
             for r in result.all()
         ]
     }
+
+
+@router.get("/cache-stats")
+async def cache_stats():
+    """Get cache hit rates and stats."""
+    from src.services.response_cache import get_all_cache_stats
+    return get_all_cache_stats()
+
+
+@router.get("/plans")
+async def list_plans():
+    """Get all subscription plans."""
+    from src.services.subscription_service import get_plan_comparison
+    return {"plans": get_plan_comparison()}

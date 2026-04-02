@@ -22,6 +22,7 @@ from src.models.coupon import Coupon  # noqa: F401
 from src.models.audit import AuditLog  # noqa: F401
 from src.models.reservation import Reservation  # noqa: F401
 from src.models.merchant_settings import MerchantSettings  # noqa: F401
+from src.models.subscription import Subscription, UsageLog  # noqa: F401
 
 
 TEST_DB_URL = "sqlite+aiosqlite:///test.db"

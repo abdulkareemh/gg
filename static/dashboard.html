@@ -384,6 +384,8 @@
     </main>
 
     <script>
+        const MERCHANT_ID = 1; // TODO: get from auth
+
         // Navigation
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
@@ -392,17 +394,51 @@
             });
         });
 
-        // Auto-refresh stats every 30s
-        async function refreshStats() {
+        // Fetch real data from API
+        async function loadDashboard() {
             try {
-                const resp = await fetch('/health');
-                const data = await resp.json();
-                console.log('[Dashboard] Health:', data.status);
+                // Fetch daily summary
+                const summaryResp = await fetch(`/api/merchants/${MERCHANT_ID}/orders/summary`);
+                if (summaryResp.ok) {
+                    const summary = await summaryResp.json();
+                    document.getElementById('today-orders').textContent = summary.order_count || '0';
+                    document.getElementById('today-revenue').textContent =
+                        (summary.total_revenue || 0).toLocaleString('en');
+                }
+
+                // Fetch low stock alerts
+                const stockResp = await fetch(`/api/merchants/${MERCHANT_ID}/products/low-stock`);
+                if (stockResp.ok) {
+                    const stock = await stockResp.json();
+                    document.getElementById('stock-alerts').textContent = stock.count || '0';
+                }
+
+                // Fetch metrics
+                const metricsResp = await fetch('/metrics');
+                if (metricsResp.ok) {
+                    const metrics = await metricsResp.json();
+                    console.log('[Dashboard] Metrics loaded:', metrics);
+                }
+
+                // Fetch cache stats
+                const cacheResp = await fetch('/api/admin/cache-stats');
+                if (cacheResp.ok) {
+                    const cache = await cacheResp.json();
+                    console.log('[Dashboard] Cache hit rate:', cache);
+                }
+
             } catch(e) {
-                console.log('[Dashboard] Server offline');
+                console.log('[Dashboard] Error loading data:', e.message);
             }
         }
+
+        // Auto-refresh stats every 30s
+        async function refreshStats() {
+            await loadDashboard();
+        }
         setInterval(refreshStats, 30000);
+        // Load on page load
+        loadDashboard();
     </script>
 </body>
 </html>
