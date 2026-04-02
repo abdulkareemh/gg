@@ -5,6 +5,8 @@ from .base_agent import AgentResponse
 from .order_agent import OrderAgent
 from .crm_agent import CRMAgent
 from .inventory_agent import InventoryAgent
+from .feedback_agent import FeedbackAgent
+from .analytics_agent import AnalyticsAgent
 
 
 # Map intents to agents
@@ -15,10 +17,14 @@ INTENT_AGENT_MAP = {
     "view_products": "order",
     "greeting": "crm",
     "inventory_check": "inventory",
-    "report": "inventory",
+    "report": "analytics",
     "payment": "order",
     "help": "crm",
 }
+
+# Keywords that trigger specific agents
+REPEAT_KEYWORDS = ["كرر", "نفس الطلبية", "كرر طلبيتي", "repeat"]
+FEEDBACK_KEYWORDS = ["تقييم", "رأيي", "فيدباك", "rate", "review"]
 
 
 class AgentRouter:
@@ -29,11 +35,30 @@ class AgentRouter:
             "order": OrderAgent(),
             "crm": CRMAgent(),
             "inventory": InventoryAgent(),
+            "feedback": FeedbackAgent(),
+            "analytics": AnalyticsAgent(),
         }
 
     async def route(self, merchant_id: int, message: str, context: dict | None = None) -> AgentResponse:
         """Route a message to the appropriate agent."""
         context = context or {}
+        normalized = normalize_arabic(message.lower())
+
+        # Check for feedback flow
+        if context.get("feedback_step") is not None:
+            return await self.agents["feedback"].handle(merchant_id, message, context)
+
+        # Check for repeat order keyword
+        if any(kw in normalized for kw in REPEAT_KEYWORDS):
+            return AgentResponse(
+                text="Repeat order requested",
+                text_ar="تكرار آخر طلبية... 🔄",
+                action="repeat_order",
+            )
+
+        # Check for feedback keyword
+        if any(kw in normalized for kw in FEEDBACK_KEYWORDS):
+            return await self.agents["feedback"].handle(merchant_id, message, context)
 
         # Detect intent from the message
         intent, confidence = detect_intent(message)
