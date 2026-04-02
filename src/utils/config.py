@@ -11,8 +11,8 @@ class Settings(BaseSettings):
     debug: bool = True
     app_port: int = 8000
 
-    # Database
-    database_url: str = "postgresql+asyncpg://noor:changeme@localhost:5432/noor_ai"
+    # Database — defaults to SQLite (zero setup required)
+    database_url: str = "sqlite+aiosqlite:///noor.db"
 
     # Redis
     redis_url: str = "redis://localhost:6379/0"
