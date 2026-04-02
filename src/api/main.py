@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from src.api.routes import webhook, health, merchants, analytics, payments, diaspora, customers
+from src.api.routes import webhook, health, merchants, analytics, payments, diaspora, customers, marketplace, admin
 from src.api.middleware import (
     RateLimitMiddleware,
     RequestLoggingMiddleware,
@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="Noor AI",
     description="AI-powered business assistant for Syrian SMEs",
-    version="0.2.0",
+    version="0.3.0",
     docs_url="/docs",
     redoc_url="/redoc",
     lifespan=lifespan,
@@ -56,6 +56,8 @@ app.include_router(analytics.router, prefix="/api/merchants", tags=["Analytics"]
 app.include_router(payments.router, prefix="/webhook", tags=["Payments"])
 app.include_router(diaspora.router, prefix="/api/diaspora", tags=["Diaspora"])
 app.include_router(customers.router, prefix="/api/merchants", tags=["Customers"])
+app.include_router(marketplace.router, prefix="/api/marketplace", tags=["Marketplace"])
+app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
 
 # Static files and landing page
 app.mount("/static", StaticFiles(directory="static"), name="static")

@@ -14,6 +14,8 @@ from src.models.customer import Customer
 from src.models.order import Order, OrderItem
 from src.models.product import Product
 from src.models.payment import Payment
+from src.models.branch import Branch
+from src.models.delivery import DeliveryZone
 
 config = context.config
 if config.config_file_name is not None:
