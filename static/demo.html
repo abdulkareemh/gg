@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>نور AI — تجربة حية</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, 'Segoe UI', Tahoma, sans-serif;
+            background: #0b141a;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: #1f2c34;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
+        .header-avatar {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .header-info { flex: 1; }
+        .header-name { color: #e9edef; font-size: 1rem; font-weight: 600; }
+        .header-status { color: #8696a0; font-size: 0.75rem; }
+        .header-actions { display: flex; gap: 16px; }
+        .header-btn {
+            background: none; border: none; color: #8696a0;
+            font-size: 1.1rem; cursor: pointer; padding: 4px;
+        }
+        .header-btn:hover { color: #e9edef; }
+
+        /* Chat area */
+        .chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px 16px;
+            background: #0b141a;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 30m-1 0a1 1 0 102 0a1 1 0 10-2 0' fill='%23ffffff08'/%3E%3C/svg%3E");
+        }
+        .chat::-webkit-scrollbar { width: 6px; }
+        .chat::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+        /* Messages */
+        .msg {
+            max-width: 85%;
+            padding: 6px 10px 6px 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            position: relative;
+            font-size: 0.92rem;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .msg-user {
+            background: #005c4b;
+            color: #e9edef;
+            margin-left: auto;
+            margin-right: 0;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 0;
+        }
+        .msg-bot {
+            background: #1f2c34;
+            color: #e9edef;
+            margin-right: auto;
+            margin-left: 0;
+            border-top-right-radius: 8px;
+            border-top-left-radius: 0;
+        }
+        .msg-time {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.45);
+            text-align: left;
+            margin-top: 2px;
+            direction: ltr;
+        }
+        .msg-wrapper {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 4px;
+        }
+        .msg-wrapper.user { align-items: flex-end; }
+        .msg-wrapper.bot { align-items: flex-start; }
+
+        /* Date separator */
+        .date-sep {
+            text-align: center;
+            margin: 12px 0;
+        }
+        .date-sep span {
+            background: #1d2831;
+            color: #8696a0;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+
+        /* Typing indicator */
+        .typing {
+            display: none;
+            padding: 12px 16px;
+        }
+        .typing.active { display: flex; gap: 4px; align-items: center; }
+        .typing-dot {
+            width: 8px; height: 8px;
+            background: #8696a0;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-6px); }
+        }
+
+        /* Input area */
+        .input-area {
+            background: #1f2c34;
+            padding: 8px 10px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .input-field {
+            flex: 1;
+            background: #2a3942;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: #e9edef;
+            font-size: 0.95rem;
+            outline: none;
+            resize: none;
+            max-height: 100px;
+            min-height: 42px;
+            line-height: 1.4;
+            font-family: inherit;
+            direction: rtl;
+        }
+        .input-field::placeholder { color: #8696a0; }
+        .send-btn {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            background: #00a884;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .send-btn:hover { background: #00c49a; }
+        .send-btn:active { transform: scale(0.95); }
+        .send-btn svg { transform: scaleX(-1); }
+
+        /* Quick replies */
+        .quick-replies {
+            display: flex;
+            gap: 6px;
+            padding: 6px 16px;
+            overflow-x: auto;
+            background: #0b141a;
+            flex-shrink: 0;
+        }
+        .quick-replies::-webkit-scrollbar { display: none; }
+        .quick-btn {
+            background: #1f2c34;
+            border: 1px solid #2a3942;
+            color: #00a884;
+            padding: 6px 14px;
+            border-radius: 18px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            cursor: pointer;
+            flex-shrink: 0;
+            font-family: inherit;
+        }
+        .quick-btn:hover { background: #2a3942; }
+
+        /* Welcome overlay */
+        .welcome-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 100;
+            padding: 20px;
+        }
+        .welcome-overlay.hidden { display: none; }
+        .welcome-card {
+            background: #1f2c34;
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 380px;
+            text-align: center;
+        }
+        .welcome-card h2 { color: #e9edef; margin: 1rem 0 0.5rem; font-size: 1.4rem; }
+        .welcome-card p { color: #8696a0; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.6; }
+        .welcome-card .start-btn {
+            background: #00a884; color: white;
+            border: none; padding: 12px 32px; border-radius: 24px;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            font-family: inherit;
+        }
+        .welcome-card .start-btn:hover { background: #00c49a; }
+
+        /* Reset button */
+        .reset-link {
+            color: #8696a0; font-size: 0.7rem; text-align: center;
+            padding: 4px; cursor: pointer;
+            background: none; border: none; font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Welcome overlay -->
+<div class="welcome-overlay" id="welcome">
+    <div class="welcome-card">
+        <div style="font-size:3rem;">🌟</div>
+        <h2>مرحبا بنور AI</h2>
+        <p>
+            هاي تجربة حية لبوت نور الذكي.<br>
+            جرّب تطلب من مطعم أبو خالد!<br><br>
+            ابعت أي رسالة بالعربي السوري وشوف كيف نور بيتعامل معك.
+        </p>
+        <button class="start-btn" onclick="startDemo()">يلا نبدأ! 🚀</button>
+    </div>
+</div>
+
+<!-- Header -->
+<div class="header">
+    <div class="header-avatar">🌟</div>
+    <div class="header-info">
+        <div class="header-name">مطعم أبو خالد</div>
+        <div class="header-status" id="status">متصل • مدعوم من نور AI</div>
+    </div>
+    <div class="header-actions">
+        <button class="header-btn" onclick="resetDemo()" title="إعادة تعيين">🔄</button>
+    </div>
+</div>
+
+<!-- Chat -->
+<div class="chat" id="chat"></div>
+
+<!-- Typing indicator -->
+<div class="typing" id="typing">
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+    <div class="typing-dot"></div>
+</div>
+
+<!-- Quick replies -->
+<div class="quick-replies" id="quickReplies">
+    <button class="quick-btn" onclick="sendQuick('مرحبا')">مرحبا 👋</button>
+    <button class="quick-btn" onclick="sendQuick('القائمة')">القائمة 📋</button>
+    <button class="quick-btn" onclick="sendQuick('بدي اطلب شاورما')">بدي اطلب 📦</button>
+    <button class="quick-btn" onclick="sendQuick('ساعات العمل')">ساعات العمل 🕐</button>
+    <button class="quick-btn" onclick="sendQuick('مساعدة')">مساعدة ❓</button>
+</div>
+
+<!-- Input -->
+<div class="input-area">
+    <textarea class="input-field" id="input" placeholder="اكتب رسالة..." rows="1"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+</div>
+
+<script>
+const SESSION_ID = 'demo_' + Math.random().toString(36).substr(2, 9);
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
+const typing = document.getElementById('typing');
+
+function startDemo() {
+    document.getElementById('welcome').classList.add('hidden');
+    input.focus();
+    // Send auto-greeting after a short delay
+    setTimeout(() => {
+        addBotMessage("أهلا وسهلا فيك بمطعم أبو خالد! 🌟\n\nأنا نور، مساعدك الذكي. كيف بقدر ساعدك؟\n\n📋 ابعت 'القائمة' لتشوف الأصناف\n📦 ابعت 'بدي اطلب' للطلب\n❓ ابعت 'مساعدة' للمساعدة");
+    }, 500);
+}
+
+function getTime() {
+    return new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+}
+
+function addUserMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'msg-wrapper user';
+    wrapper.innerHTML = `<div class="msg msg-user">${escapeHtml(text)}<div class="msg-time">${getTime()} ✓✓</div></div>`;
+    chat.appendChild(wrapper);
+    scrollToBottom();
+}
+
+function addBotMessage(text) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'msg-wrapper bot';
+    wrapper.innerHTML = `<div class="msg msg-bot">${escapeHtml(text)}<div class="msg-time">${getTime()}</div></div>`;
+    chat.appendChild(wrapper);
+    scrollToBottom();
+}
+
+function escapeHtml(text) {
+    return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>');
+}
+
+function scrollToBottom() {
+    setTimeout(() => chat.scrollTop = chat.scrollHeight, 50);
+}
+
+function showTyping() {
+    typing.classList.add('active');
+    scrollToBottom();
+}
+
+function hideTyping() {
+    typing.classList.remove('active');
+}
+
+async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    input.style.height = 'auto';
+    addUserMessage(text);
+    showTyping();
+
+    try {
+        const resp = await fetch('/api/demo/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: SESSION_ID, message: text }),
+        });
+        const data = await resp.json();
+
+        // Simulate typing delay (300-800ms based on response length)
+        const delay = Math.min(300 + data.reply.length * 5, 1500);
+        setTimeout(() => {
+            hideTyping();
+            addBotMessage(data.reply);
+        }, delay);
+    } catch (e) {
+        hideTyping();
+        addBotMessage("عذراً، حصل خطأ. حاول مرة تانية.");
+    }
+}
+
+function sendQuick(text) {
+    input.value = text;
+    sendMessage();
+}
+
+async function resetDemo() {
+    await fetch(`/api/demo/reset?session_id=${SESSION_ID}`, { method: 'POST' });
+    chat.innerHTML = '';
+    addBotMessage("تم إعادة التعيين! 🔄\n\nأهلا وسهلا فيك من جديد. كيف بقدر ساعدك؟");
+}
+
+// Auto-resize textarea
+input.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+});
+
+// Enter to send (Shift+Enter for newline)
+input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    }
+});
+</script>
+</body>
+</html>
