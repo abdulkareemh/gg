@@ -67,3 +67,8 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 async def landing_page():
     return FileResponse("static/index.html")
+
+
+@app.get("/dashboard")
+async def dashboard():
+    return FileResponse("static/dashboard.html")

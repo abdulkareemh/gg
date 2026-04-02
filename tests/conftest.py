@@ -18,6 +18,10 @@ from src.models.loyalty import LoyaltyProgram, LoyaltyBalance, LoyaltyTransactio
 from src.models.review import Review  # noqa: F401
 from src.models.scheduled_order import ScheduledOrder  # noqa: F401
 from src.models.expense import Expense  # noqa: F401
+from src.models.coupon import Coupon  # noqa: F401
+from src.models.audit import AuditLog  # noqa: F401
+from src.models.reservation import Reservation  # noqa: F401
+from src.models.merchant_settings import MerchantSettings  # noqa: F401
 
 
 TEST_DB_URL = "sqlite+aiosqlite:///test.db"

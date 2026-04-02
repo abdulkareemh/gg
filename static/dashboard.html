@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نور AI — لوحة التحكم</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0f0f23;
+            color: #e0e0e0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: #1a1a2e;
+            border-left: 1px solid rgba(255,255,255,0.05);
+            padding: 1.5rem 0;
+            position: fixed;
+            right: 0;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar-logo {
+            text-align: center;
+            padding: 0 1rem 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 1rem;
+        }
+        .sidebar-logo h2 { color: #818cf8; font-size: 1.4rem; }
+        .sidebar-logo p { color: #64748b; font-size: 0.8rem; }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.8rem 1.5rem;
+            color: #94a3b8;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-right: 3px solid transparent;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(99,102,241,0.1);
+            color: #818cf8;
+            border-right-color: #6366f1;
+        }
+        .nav-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+
+        /* Main */
+        .main { margin-right: 240px; flex: 1; padding: 2rem; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .page-header h1 { font-size: 1.8rem; color: #e0e0e0; }
+        .badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            background: rgba(99,102,241,0.2);
+            color: #818cf8;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+        .stat-card .label { color: #64748b; font-size: 0.85rem; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #e0e0e0; }
+        .stat-card .change {
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+        }
+        .stat-card .change.up { color: #22c55e; }
+        .stat-card .change.down { color: #ef4444; }
+        .stat-card.purple .value { color: #818cf8; }
+        .stat-card.green .value { color: #22c55e; }
+        .stat-card.amber .value { color: #f59e0b; }
+        .stat-card.rose .value { color: #f43f5e; }
+
+        /* Tables */
+        .card {
+            background: #1a1a2e;
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card h3 {
+            margin-bottom: 1rem;
+            color: #94a3b8;
+            font-size: 1rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: right;
+            padding: 0.7rem;
+            color: #64748b;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        td {
+            padding: 0.7rem;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            font-size: 0.9rem;
+        }
+        .status-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+        .status-pending { background: rgba(245,158,11,0.2); color: #f59e0b; }
+        .status-confirmed { background: rgba(59,130,246,0.2); color: #3b82f6; }
+        .status-preparing { background: rgba(168,85,247,0.2); color: #a855f7; }
+        .status-ready { background: rgba(34,197,94,0.2); color: #22c55e; }
+        .status-completed { background: rgba(34,197,94,0.2); color: #22c55e; }
+
+        /* Charts placeholder */
+        .chart-container {
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            height: 120px;
+            padding-top: 1rem;
+        }
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, #6366f1, #818cf8);
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            position: relative;
+        }
+        .chart-bar:hover { opacity: 0.8; }
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            color: #64748b;
+            font-size: 0.7rem;
+            padding-top: 0.3rem;
+        }
+
+        /* Grid layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+
+        /* Activity feed */
+        .activity-item {
+            display: flex;
+            gap: 0.8rem;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .activity-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+        .activity-icon.order { background: rgba(59,130,246,0.2); }
+        .activity-icon.payment { background: rgba(34,197,94,0.2); }
+        .activity-icon.customer { background: rgba(168,85,247,0.2); }
+        .activity-icon.alert { background: rgba(245,158,11,0.2); }
+        .activity-text { font-size: 0.85rem; }
+        .activity-time { color: #64748b; font-size: 0.75rem; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main { margin-right: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-logo">
+            <h2>🌟 نور AI</h2>
+            <p>لوحة التحكم</p>
+        </div>
+        <div class="nav-item active"><span class="nav-icon">📊</span> الرئيسية</div>
+        <div class="nav-item"><span class="nav-icon">📦</span> الطلبيات</div>
+        <div class="nav-item"><span class="nav-icon">📋</span> المنتجات</div>
+        <div class="nav-item"><span class="nav-icon">👥</span> الزبائن</div>
+        <div class="nav-item"><span class="nav-icon">💳</span> المدفوعات</div>
+        <div class="nav-item"><span class="nav-icon">🏆</span> الولاء</div>
+        <div class="nav-item"><span class="nav-icon">⭐</span> التقييمات</div>
+        <div class="nav-item"><span class="nav-icon">💸</span> المصاريف</div>
+        <div class="nav-item"><span class="nav-icon">🚚</span> التوصيل</div>
+        <div class="nav-item"><span class="nav-icon">📈</span> التقارير</div>
+        <div class="nav-item"><span class="nav-icon">🎟️</span> القسائم</div>
+        <div class="nav-item"><span class="nav-icon">⚙️</span> الإعدادات</div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="page-header">
+            <div>
+                <h1>مرحبا، أحمد 👋</h1>
+                <p style="color:#64748b; margin-top:0.3rem;">مطعم الشام الأصيل — دمشق</p>
+            </div>
+            <span class="badge">الخطة الاحترافية</span>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card purple">
+                <div class="label">طلبيات اليوم</div>
+                <div class="value" id="today-orders">23</div>
+                <div class="change up">↑ 15% عن أمس</div>
+            </div>
+            <div class="stat-card green">
+                <div class="label">إيرادات اليوم</div>
+                <div class="value" id="today-revenue">575,000</div>
+                <div class="change up">↑ 22% عن أمس</div>
+            </div>
+            <div class="stat-card amber">
+                <div class="label">زبائن جدد</div>
+                <div class="value" id="new-customers">7</div>
+                <div class="change up">↑ 3 عن أمس</div>
+            </div>
+            <div class="stat-card rose">
+                <div class="label">تنبيهات المخزون</div>
+                <div class="value" id="stock-alerts">2</div>
+                <div class="change">منتجات قربت تخلص</div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- Revenue Chart -->
+            <div class="card">
+                <h3>📈 إيرادات الأسبوع (ل.س)</h3>
+                <div class="chart-container">
+                    <div class="chart-bar" style="height:60%"></div>
+                    <div class="chart-bar" style="height:75%"></div>
+                    <div class="chart-bar" style="height:45%"></div>
+                    <div class="chart-bar" style="height:90%"></div>
+                    <div class="chart-bar" style="height:70%"></div>
+                    <div class="chart-bar" style="height:85%"></div>
+                    <div class="chart-bar" style="height:100%"></div>
+                </div>
+                <div class="chart-label">
+                    <span>السبت</span><span>الأحد</span><span>الاثنين</span><span>الثلاثاء</span>
+                    <span>الأربعاء</span><span>الخميس</span><span>الجمعة</span>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card">
+                <h3>🔔 آخر النشاطات</h3>
+                <div class="activity-item">
+                    <div class="activity-icon order">📦</div>
+                    <div>
+                        <div class="activity-text">طلبية جديدة #247 — محمد (55,000 ل.س)</div>
+                        <div class="activity-time">منذ 3 دقائق</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon payment">💳</div>
+                    <div>
+                        <div class="activity-text">دفعة مستلمة — سيرياتيل كاش (35,000 ل.س)</div>
+                        <div class="activity-time">منذ 12 دقيقة</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon customer">👤</div>
+                    <div>
+                        <div class="activity-text">زبون جديد — فاطمة (+963955...)</div>
+                        <div class="activity-time">منذ 25 دقيقة</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon alert">⚠️</div>
+                    <div>
+                        <div class="activity-text">تنبيه: عصير برتقال — باقي 3 حبات فقط</div>
+                        <div class="activity-time">منذ ساعة</div>
+                    </div>
+                </div>
+                <div class="activity-item">
+                    <div class="activity-icon order">📦</div>
+                    <div>
+                        <div class="activity-text">طلبية #246 — تم التوصيل ✅</div>
+                        <div class="activity-time">منذ ساعتين</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2">
+            <!-- Recent Orders -->
+            <div class="card">
+                <h3>📦 آخر الطلبيات</h3>
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>الزبون</th><th>المبلغ</th><th>الحالة</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>#247</td><td>محمد</td><td>55,000 ل.س</td>
+                            <td><span class="status-badge status-pending">بانتظار التأكيد</span></td>
+                        </tr>
+                        <tr>
+                            <td>#246</td><td>سارة</td><td>35,000 ل.س</td>
+                            <td><span class="status-badge status-completed">مكتمل</span></td>
+                        </tr>
+                        <tr>
+                            <td>#245</td><td>علي</td><td>70,000 ل.س</td>
+                            <td><span class="status-badge status-preparing">قيد التحضير</span></td>
+                        </tr>
+                        <tr>
+                            <td>#244</td><td>ريم</td><td>25,000 ل.س</td>
+                            <td><span class="status-badge status-ready">جاهز</span></td>
+                        </tr>
+                        <tr>
+                            <td>#243</td><td>عمر</td><td>90,000 ل.س</td>
+                            <td><span class="status-badge status-completed">مكتمل</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Top Products -->
+            <div class="card">
+                <h3>🏆 الأكثر مبيعاً اليوم</h3>
+                <table>
+                    <thead>
+                        <tr><th>المنتج</th><th>الكمية</th><th>الإيراد</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>شاورما دجاج</td><td>45</td><td>1,125,000 ل.س</td></tr>
+                        <tr><td>فلافل</td><td>32</td><td>480,000 ل.س</td></tr>
+                        <tr><td>مشاوي مشكلة</td><td>12</td><td>780,000 ل.س</td></tr>
+                        <tr><td>عصير برتقال</td><td>38</td><td>190,000 ل.س</td></tr>
+                        <tr><td>كنافة</td><td>15</td><td>225,000 ل.س</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- P&L Summary -->
+        <div class="card">
+            <h3>📊 ملخص الأرباح والخسائر — أبريل 2026</h3>
+            <div class="stats-grid" style="margin-bottom:0">
+                <div class="stat-card green">
+                    <div class="label">الإيرادات</div>
+                    <div class="value" style="font-size:1.5rem">5,400,000 ل.س</div>
+                </div>
+                <div class="stat-card rose">
+                    <div class="label">المصاريف</div>
+                    <div class="value" style="font-size:1.5rem">3,200,000 ل.س</div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="label">صافي الربح</div>
+                    <div class="value" style="font-size:1.5rem">2,200,000 ل.س</div>
+                    <div class="change up">هامش الربح: 40.7%</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+
+        // Auto-refresh stats every 30s
+        async function refreshStats() {
+            try {
+                const resp = await fetch('/health');
+                const data = await resp.json();
+                console.log('[Dashboard] Health:', data.status);
+            } catch(e) {
+                console.log('[Dashboard] Server offline');
+            }
+        }
+        setInterval(refreshStats, 30000);
+    </script>
+</body>
+</html>
