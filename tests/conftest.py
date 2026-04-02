@@ -14,6 +14,10 @@ from src.models.product import Product  # noqa: F401
 from src.models.payment import Payment  # noqa: F401
 from src.models.branch import Branch  # noqa: F401
 from src.models.delivery import DeliveryZone  # noqa: F401
+from src.models.loyalty import LoyaltyProgram, LoyaltyBalance, LoyaltyTransaction  # noqa: F401
+from src.models.review import Review  # noqa: F401
+from src.models.scheduled_order import ScheduledOrder  # noqa: F401
+from src.models.expense import Expense  # noqa: F401
 
 
 TEST_DB_URL = "sqlite+aiosqlite:///test.db"

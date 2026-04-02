@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
-from src.api.routes import webhook, health, merchants, analytics, payments, diaspora, customers, marketplace, admin
+from src.api.routes import webhook, health, merchants, analytics, payments, diaspora, customers, marketplace, admin, reports
 from src.api.middleware import (
     RateLimitMiddleware,
     RequestLoggingMiddleware,
@@ -58,6 +58,7 @@ app.include_router(diaspora.router, prefix="/api/diaspora", tags=["Diaspora"])
 app.include_router(customers.router, prefix="/api/merchants", tags=["Customers"])
 app.include_router(marketplace.router, prefix="/api/marketplace", tags=["Marketplace"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
+app.include_router(reports.router, prefix="/api/merchants", tags=["Reports", "Reviews", "Loyalty", "Expenses", "Delivery"])
 
 # Static files and landing page
 app.mount("/static", StaticFiles(directory="static"), name="static")
