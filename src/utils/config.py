@@ -1,9 +1,11 @@
 """Application settings loaded from environment."""
 
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file="config/.env")
+
     app_name: str = "NoorAI"
     app_env: str = "development"
     debug: bool = True
@@ -34,8 +36,6 @@ class Settings(BaseSettings):
     # App URL (for payment callbacks)
     app_url: str = "http://localhost:8000"
 
-    class Config:
-        env_file = "config/.env"
 
 
 settings = Settings()

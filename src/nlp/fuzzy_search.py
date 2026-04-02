@@ -72,6 +72,9 @@ def fuzzy_match_product(query: str, products: list[dict], threshold: float = 0.5
         List of (product, score) sorted by relevance
     """
     normalized_query = normalize_arabic(query.lower().strip())
+    if not normalized_query:
+        return []
+
     results = []
 
     for product in products:

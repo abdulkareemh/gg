@@ -165,8 +165,8 @@ class TestCurrencyFlow:
         assert usd is not None
         assert eur is not None
         assert try_val is not None
-        assert usd < eur  # EUR is worth more
-        assert try_val > usd  # TRY is worth less
+        assert eur < usd  # EUR is worth more, so fewer EUR for same SYP
+        assert try_val > usd  # TRY is worth less, so more TRY for same SYP
 
 
 class TestPromotionTargeting:
